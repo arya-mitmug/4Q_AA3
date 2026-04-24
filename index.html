@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pre-Order Form</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #ffe0e9;
+    }
+
+    .container {
+      width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 50px;
+      box-shadow: 0 0 10px rgba(105, 8, 45, 0.1);
+    }
+
+    h2 {
+        margin-bottom: 10px;
+        color: #bb384e;
+        text-align: center;
+    }
+
+    P {
+      margin:0;
+      text-align: justify;
+    }
+
+    input, select {
+      width: 95%;
+      padding: 8px;
+      margin: 8px 0;
+    }
+
+    #terms {
+      width: 10%;
+    }
+
+    button {
+      padding: 10px;
+      width: 100%;
+      margin-top: 5px;
+      background-color: #eb677d;
+      color: rgb(255, 255, 255);
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #da4f66;
+    }
+
+    .error {
+      color: red;
+      margin-bottom: 10px;
+      min-height: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Antho-Presko Pre-Order</h2>
+  <p>Project Antho-Presko is an intelligent packaging strip that provides a simple way to identify early food spoilage by detecting ammonia (NH3) released from protein-rich foods through a natural colorimetric strip, helping make food spoilage detection more accessible and sustainable.</p>
+
+  <!-- Error Message Area -->
+  <div id="errorMsg" class="error"></div>
+
+  <form onsubmit="return handleOrder()">
+    
+    <label>Name:</label>
+    <input type="text" id="name">
+
+    <label>Product:</label>
+    <select id="variant">
+      <option value="">Select</option>
+      <option value="value1">Without Cover -- ₱95</option>
+      <option value="value2">With Cover -- ₱145</option>
+    </select>
+
+    <label>Quantity:</label>
+    <input type="number" id="quantity">
+
+    <label>Pickup Method:</label>
+    <select id="pickup">
+      <option value="">Select</option>
+      <option value="Delivery">Delivery</option>
+      <option value="Meetup">Meetup</option>
+    </select>
+
+    <label>Address (for delivery only):</label>
+    <input type="text" id="address">
+
+    <label>
+      <input type="checkbox" id="terms"> I accept terms
+    </label>
+    <br><br>
+
+    <button type="button" onclick="loadPreviousOrder()">Load Previous Order</button>
+    <button type="submit">Submit</button>
+
+  </form>
+</div>
+
+<script>
+
+  function setCookie(name, value, maxAge) {
+    let expires = "";
+
+    if (maxAge) {
+        let date = new Date();
+        date.setTime(date.getTime() + maxAge * 1000);
+        expires = "; expires=" + date.toUTCString();
+    }
+
+    document.cookie = name + "=" + value + expires + "; path=/";
+  }
+
+  function getCookie(name) {
+    let nameCK = name + "=";
+    let carr = document.cookie.split(';');
+
+    for (let i = 0; i < carr.length; i++) {
+        let c = carr[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameCK) == 0) return c.substring(nameCK.length, c.length);
+    }
+
+    return null;
+  }
+
+  function deleteCookie(name) {
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  }
+
+  function validateForm() {
+    let errors = [];
+    let name = document.getElementById("name").value.trim();
+    let variant = document.getElementById("variant").value;
+    let quantity = parseInt(document.getElementById("quantity").value);
+    let pickup = document.getElementById("pickup").value;
+    let address = document.getElementById("address").value.trim();
+    let terms = document.getElementById("terms").checked;
+
+    if (!name) errors.push("Name");
+    if (!variant) errors.push("Product");
+    if (!quantity || quantity <= 0) errors.push("Quantity");
+    if (!pickup) errors.push("Pickup Method");
+    if (pickup === "Delivery" && !address) errors.push("Address (for Delivery)");
+    if (!terms) errors.push("Terms (must be accepted)");
+
+    if (errors.length > 0) {
+        document.getElementById("errorMsg").innerHTML = "Please fill in the following fields: " + errors.join(", ");
+        return false;
+    }
+    return true;
+  }
+
+  function handleOrder() {
+    document.getElementById("errorMsg").innerHTML = "";
+
+    if (!validateForm()) {
+      return false;
+    }
+
+    let name = document.getElementById("name").value.trim();
+    let variant = document.getElementById("variant").value;
+    let quantity = document.getElementById("quantity").value;
+    let pickup = document.getElementById("pickup").value;
+    let address = document.getElementById("address").value.trim();
+
+    setCookie("name", name, 30 * 24 * 60 * 60);
+    localStorage.setItem("variant", variant);
+    localStorage.setItem("quantity", quantity);
+    localStorage.setItem("pickup", pickup);
+    localStorage.setItem("address", address);
+
+    window.location.href = "summary.html";
+
+    return false;
+  }
+
+  function loadPreviousOrder() {
+    document.getElementById("errorMsg").innerHTML = "";
+
+    let name = getCookie("name");
+    let variant = localStorage.getItem("variant");
+    let quantity = localStorage.getItem("quantity");
+    let pickup = localStorage.getItem("pickup");
+    let address = localStorage.getItem("address");
+
+    if (!name && !variant && !quantity && !pickup && !address) {
+        document.getElementById("errorMsg").innerHTML = "No previous order data";
+        return;
+    }
+
+    if (name) document.getElementById("name").value = name;
+    if (variant) document.getElementById("variant").value = variant;
+    if (quantity) document.getElementById("quantity").value = quantity;
+    if (pickup) document.getElementById("pickup").value = pickup;
+    if (address) document.getElementById("address").value = address;
+  }
+
+</script>
+
+</body>
+</html>
+

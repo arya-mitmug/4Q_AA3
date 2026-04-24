@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Summary</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #ffe0e9;
+    }
+
+    .container {
+      width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 50px;
+      box-shadow: 0 0 10px rgba(105, 8, 45, 0.1);
+    }
+
+    h2 {
+        margin-bottom: 10px;
+        color: #bb384e;
+        text-align: center;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .summary {
+      margin-bottom: 8px;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    input, select {
+      width: 95%;
+      padding: 8px;
+      margin: 8px 0;
+    }
+
+    #terms {
+      width: 10%;
+    }
+
+    button {
+      padding: 10px;
+      width: 100%;
+      margin-top: 5px;
+      background-color: #eb677d;
+      color: rgb(255, 255, 255);
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #da4f66;
+    }
+
+    .error {
+      color: red;
+      margin-bottom: 10px;
+      min-height: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Order Summary</h2>
+
+  <div id="summaryContent">
+      <div class="summary"><span class="bold">Customer Name:</span> null</div>
+      <div class="summary"><span class="bold">Product Name:</span> Regular - 1000 mL</div>
+      <div class="summary"><span class="bold">Quantity:</span> 2</div>
+      <div class="summary"><span class="bold">Total Amount:</span> ₱2500</div>
+      <div class="summary"><span class="bold">Pickup Method:</span> Delivery</div>
+    <div class="summary"><span class="bold">Address:</span> 117a</div></div>
+
+    <p>Your food is safe and presko, with Antho-Presko!</p>
+</div>
+
+<script>
+
+
+  function getCookie(name) {
+    let nameCK = name + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameCK) == 0) return c.substring(nameCK.length, c.length);
+    }
+    return null;
+  }
+  
+  let products = {
+    "value1": { name: "Without Cover -- ₱95", price: 95 },
+    "value2": { name: "With Cover -- ₱145", price: 145 }
+  };
+
+  function loadSummary() {
+    let name = getCookie("name");
+    let variant = localStorage.getItem("variant");
+    let quantity = localStorage.getItem("quantity");
+    let pickup = localStorage.getItem("pickup");
+    let address = localStorage.getItem("address");
+
+    let product = products[variant];
+    let totalAmount = product ? product.price * quantity : 0;
+
+    let summaryHTML = `
+      <div class="summary"><span class="bold">Customer Name:</span> ${name}</div>
+      <div class="summary"><span class="bold">Product Name:</span> ${product.name}</div>
+      <div class="summary"><span class="bold">Quantity:</span> ${quantity}</div>
+      <div class="summary"><span class="bold">Total Amount:</span> ₱${totalAmount}</div>
+      <div class="summary"><span class="bold">Pickup Method:</span> ${pickup}</div>
+    `;
+
+    if (pickup === "Delivery") {
+      summaryHTML += `<div class="summary"><span class="bold">Address:</span> ${address}</div>`;
+    }
+
+    document.getElementById("summaryContent").innerHTML = summaryHTML;
+  }
+
+  window.onload = loadSummary;
+
+
+
+</script>
+
+</body>
+</html>
+
